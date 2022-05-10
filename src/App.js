@@ -3,66 +3,64 @@ import NavBar from "./components/navbar";
 import Counters from "./components/counters";
 
 class App extends Component {
-  state = {
-    counters: [
-      { id: 1, value: 0 },
-      { id: 2, value: 0 },
-      { id: 3, value: 0 },
-      { id: 4, value: 0 },
-    ],
-  };
+  MoveUp() {
+    console.log("up called");
+    var ddl = document.getElementById('contentlist');
+    var selectedItems = new Array();
+    var temp = { innerHTML: null, value: null };
+    for (var k = 0; k < ddl.length; k++)
+      if (ddl.options[k].selected)
+        selectedItems.push(k);
 
-  handleIncrement = (counter) => {
-    const counters = [...this.state.counters];
-    const index = counters.indexOf(counter);
-    counters[index] = { ...counters[index] };
-    counters[index].value++;
-    this.setState({ counters });
-  };
+    if (selectedItems.length > 0)
+      if (selectedItems[0] !== 0)
+        for (var i = 0; i < selectedItems.length; i++) {
+          temp.innerHTML = ddl.options[selectedItems[i]].innerHTML;
+          temp.value = ddl.options[selectedItems[i]].value;
+          ddl.options[selectedItems[i]].innerHTML = ddl.options[selectedItems[i] - 1].innerHTML;
+          ddl.options[selectedItems[i]].value = ddl.options[selectedItems[i] - 1].value;
+          ddl.options[selectedItems[i] - 1].innerHTML = temp.innerHTML;
+          ddl.options[selectedItems[i] - 1].value = temp.value;
+          ddl.options[selectedItems[i] - 1].selected = true;
+          ddl.options[selectedItems[i]].selected = false;
+        }
+  }
+  MoveDown() {
+    var ddl = document.getElementById('contentlist');
+    var selectedItems = new Array();
+    var temp = { innerHTML: null, value: null };
+    for (var k = 0; k < ddl.length; k++)
+      if (ddl.options[k].selected)
+        selectedItems.push(k);
 
-  handleDecrement = (counter) => {
-    const counters = [...this.state.counters];
-    const index = counters.indexOf(counter);
-    counters[index] = { ...counters[index] };
-    counters[index].value--;
-    this.setState({ counters });
-  };
-
-  handleReset = () => {
-    const counters = this.state.counters.map((c) => {
-      c.value = 0;
-      return c;
-    });
-    this.setState({ counters });
-  };
-
-  handleDelete = (counterId) => {
-    const counters = this.state.counters.filter((c) => c.id !== counterId);
-    this.setState({ counters });
-  };
-
-  handleRestart = () => {
-    window.location.reload();
-  };
+    if (selectedItems.length > 0)
+      if (selectedItems[selectedItems.length - 1] !== ddl.length - 1)
+        for (var i = selectedItems.length - 1; i >= 0; i--) {
+          temp.innerHTML = ddl.options[selectedItems[i]].innerHTML;
+          temp.value = ddl.options[selectedItems[i]].value;
+          ddl.options[selectedItems[i]].innerHTML = ddl.options[selectedItems[i] + 1].innerHTML;
+          ddl.options[selectedItems[i]].value = ddl.options[selectedItems[i] + 1].value;
+          ddl.options[selectedItems[i] + 1].innerHTML = temp.innerHTML;
+          ddl.options[selectedItems[i] + 1].value = temp.value;
+          ddl.options[selectedItems[i] + 1].selected = true;
+          ddl.options[selectedItems[i]].selected = false;
+        }
+  }
 
   render() {
     return (
       <div className="main__wrap">
         <main className="container">
           <div className="card__box">
-            <NavBar
-              totalCounters={
-                this.state.counters.filter((c) => c.value > 0).length
-              }
-            />
-            <Counters
-              counters={this.state.counters}
-              onReset={this.handleReset}
-              onIncrement={this.handleIncrement}
-              onDecrement={this.handleDecrement}
-              onDelete={this.handleDelete}
-              onRestart={this.handleRestart}
-            />
+            <select id="contentlist" style={{overflowY:"hidden",height:"150px",width:"100%"}} name="itemId" multiple="multiple">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+            <button id="Up" onClick={this.MoveUp}>Up</button>
+            <button id="Down" onClick={this.MoveDown}>Down</button>
           </div>
         </main>
       </div>
